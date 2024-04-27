@@ -62,7 +62,7 @@ class modifiedText(Resource):
               in: query
               type: string
               required: false
-              description: Specify 'uppercase', 'lowercase', or 'none' to modify the text accordingly
+              description: Specify '1', '2', or '0' to modify the text accordingly
         responses:
             200:
                 description: A successful GET request
@@ -81,9 +81,9 @@ class modifiedText(Resource):
 
         duplicated_text = text * duplication
 
-        if modify_text == 'uppercase':
+        if modify_text == '1':
             modified_text = duplicated_text.upper()
-        elif modify_text == 'lowercase':
+        elif modify_text == '2':
             modified_text = duplicated_text.lower()
         else:
             modified_text = duplicated_text
