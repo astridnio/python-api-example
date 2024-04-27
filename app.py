@@ -89,9 +89,11 @@ class Questions(Resource):
         # Get all the questions
         questions = question_review.get_all_records(count=count, sort=sort)
 
-        # Adjust the format of options
+# Adjust the format of options
         for question in questions:
-            question['options'] = question['options'].split(", ")  # Assuming options are comma-separated strings
+            # Assuming options are stored as a single string separated by commas, split them into a list
+            question['options'] = [option.strip() for option in question.get('options', '').split(',')]
+
 
         return {"questions": questions}, 200
     
