@@ -31,6 +31,9 @@ def add_record(data):
     # require data contains a "name" key and a "options" key  and a "correct" key(data is a dict)
     if 'name' not in data or 'options' not in data or 'correct' not in data:
         return False
+        # Convert options to a string
+    if isinstance(data['options'], list):
+        data['options'] = ", ".join(data['options'])
     table.create(data)
     return True
 
