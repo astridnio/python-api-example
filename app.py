@@ -89,11 +89,11 @@ class Questions(Resource):
         # Get all the questions
         questions = question_review.get_all_records(count=count, sort=sort)
 
-# Adjust the format of options
+        # Adjust the format of options
         for question in questions:
-            # Assuming options are stored as a single string separated by commas, split them into a list
-            question['options'] = [option.strip() for option in question.get('options', '').split(',')]
-
+            # Parse options from the 'fields' dictionary and unify them with the top-level 'options' property
+            question['options'] = eval(question['fields'].get('options', '[]'))
+            del question['fields']['options']
 
         return {"questions": questions}, 200
     
