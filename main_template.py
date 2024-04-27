@@ -73,7 +73,7 @@ class modifiedText(Resource):
                         properties:
                             text:
                                 type: string
-                                description: The text in uppercase, lowercase, or unchanged
+                                description: The text in 1, 2, or 0
         """
         text = request.args.get('text')
         duplication = int(request.args.get('duplication', 1))  # Default to 1 if not provided
