@@ -111,9 +111,7 @@ class AddQuestion(Resource):
                     type: string
                     description: the name of the question
                   options:
-                    type: array
-                    items:
-                      type: string
+                    type: string
                     description: the options of the question
                   correct:
                     type: integer
