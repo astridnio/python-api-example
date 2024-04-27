@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from flasgger import Swagger
 
-import book_review
+import question_review
 
 app = Flask(__name__)
 api = Api(app)
@@ -37,53 +37,59 @@ class UppercaseText(Resource):
 
         return jsonify({"text": text.upper()})
     
-class Records(Resource):
+class Questions(Resource):
     def get(self):
         """
-        This method responds to the GET request for returning a number of books.
+        This method responds to the GET request for returning a number of questions.
         ---
         tags:
-        - Records
+        - Questions
         parameters:
             - name: count
               in: query
               type: integer
               required: false
-              description: The number of books to return
+              description: The number of Questions to return
             - name: sort
               in: query
               type: string
               enum: ['ASC', 'DESC']
               required: false
-              description: Sort order for the books
+              description: Sort order for the Questions
         responses:
             200:
                 description: A successful GET request
                 schema:
                     type: object
                     properties:
-                        books:
+                        questions:
                             type: array
                             items:
                                 type: object
                                 properties:
-                                    title:
+                                    name:
                                         type: string
-                                        description: The title of the book
-                                    author:
+                                        description: The name of the question
+                                    options:
                                         type: string
-                                        description: The author of the book
+                                        description: The options of the question
+                                    correct:
+                                        type: number
+                                        description: The correct response of the question
+                                    exam:
+                                        type: string
+                                        description: The exam of the question
         """
 
-        count = request.args.get('count')  # Default to returning 10 books if count is not provided
+        count = request.args.get('count')  # Default to returning 10 questions if count is not provided
         sort = request.args.get('sort')
 
-        # Get all the books
-        books = book_review.get_all_records(count=count, sort=sort)
+        # Get all the questions
+        questions = question_review.get_all_records(count=count, sort=sort)
 
-        return {"books": books}, 200
+        return {"questions": questions}, 200
     
-class AddRecord(Resource):
+class AddQuestion(Resource):
     def post(self):
         """
         This method responds to the POST request for adding a new record to the DB table.
@@ -95,32 +101,40 @@ class AddRecord(Resource):
               name: body
               required: true
               schema:
-                id: BookReview
+                id: ResidencyQuestions
                 required:
-                  - Book
-                  - Rating
+                  - name
+                  - options
+                  - correct
                 properties:
-                  Book:
+                  name:
                     type: string
-                    description: the name of the book
-                  Rating:
+                    description: the name of the question
+                  options:
+                    type: string
+                    description: the options of the question
+                  correct:
                     type: integer
-                    description: the rating of the book (1-10)
+                    description: the correct option of the question
+                  exam:
+                    type: string
+                    description: the exam of the question
+                    
         responses:
             200:
                 description: A successful POST request
             400: 
-                description: Bad request, missing 'Book' or 'Rating' in the request body
+                description: Bad request, missing 'name' or 'options' or 'correct' in the request body
         """
 
         data = request.json
         print(data)
 
-        # Check if 'Book' and 'Rating' are present in the request body
-        if 'Book' not in data or 'Rating' not in data:
-            return {"message": "Bad request, missing 'Book' or 'Rating' in the request body"}, 400
+        # Check if 'name' and 'options' and 'correct' are present in the request body
+        if 'name' not in data or 'options' not in data or 'correct' not in data:
+            return {"message": "Bad request, missing 'name' or 'options' or 'correct' in the request body"}, 400
         # Call the add_record function to add the record to the DB table
-        success = book_review.add_record(data)
+        success = question_review.add_record(data)
 
         if success:
             return {"message": "Record added successfully"}, 200
@@ -129,8 +143,8 @@ class AddRecord(Resource):
         
 
 
-api.add_resource(AddRecord, "/add-record")
-api.add_resource(Records, "/records")
+api.add_resource(AddQuestion, "/add-question")
+api.add_resource(Questions, "/questions")
 api.add_resource(UppercaseText, "/uppercase")
 
 if __name__ == "__main__":
