@@ -77,13 +77,13 @@ class modifiedText(Resource):
         """
         text = request.args.get('text')
         duplication = int(request.args.get('duplication', 1))  # Default to 1 if not provided
-        modify_text = request.args.get('modifytext', 'none')
+        modify_text = int(request.args.get('modifytext', 0)) # Default to 0 if not provided
 
         duplicated_text = text * duplication
 
-        if modify_text == '1':
+        if modify_text == 1:
             modified_text = duplicated_text.upper()
-        elif modify_text == '2':
+        elif modify_text == 2:
             modified_text = duplicated_text.lower()
         else:
             modified_text = duplicated_text
