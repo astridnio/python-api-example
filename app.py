@@ -71,7 +71,9 @@ class Questions(Resource):
                                         type: string
                                         description: The name of the question
                                     options:
-                                        type: string
+                                        type: array
+                                        items:
+                                            type: string
                                         description: The options of the question
                                     correct:
                                         type: number
@@ -86,6 +88,10 @@ class Questions(Resource):
 
         # Get all the questions
         questions = question_review.get_all_records(count=count, sort=sort)
+
+        # Adjust the format of options
+        for question in questions:
+            question['options'] = question['options'].split(", ")  # Assuming options are comma-separated strings
 
         return {"questions": questions}, 200
     
