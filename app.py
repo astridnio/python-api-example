@@ -67,20 +67,30 @@ class Questions(Resource):
                             items:
                                 type: object
                                 properties:
-                                    name:
+                                    id:
                                         type: string
-                                        description: The name of the question
-                                    options:
-                                        type: array
-                                        items:
-                                            type: string
-                                        description: The options of the question
-                                    correct:
-                                        type: number
-                                        description: The correct response of the question
-                                    exam:
+                                        description: The ID of the question
+                                    createdTime:
                                         type: string
-                                        description: The exam of the question
+                                        description: The creation time of the question
+                                    fields:
+                                        type: object
+                                        description: The fields of the question
+                                        properties:
+                                            name:
+                                                type: string
+                                                description: The name of the question
+                                            exam:
+                                                type: string
+                                                description: The exam of the question
+                                            options:
+                                                type: array
+                                                items:
+                                                    type: string
+                                                description: The options of the question
+                                            correct:
+                                                type: number
+                                                description: The correct response of the question
         """
 
         count = request.args.get('count')  # Default to returning 10 questions if count is not provided
@@ -89,11 +99,12 @@ class Questions(Resource):
         # Get all the questions
         questions = question_review.get_all_records(count=count, sort=sort)
 
-        # Adjust the format of options
+        # Adjust the format of options and move them into the 'fields' object
         for question in questions:
-            # Parse options from the 'fields' dictionary and unify them with the top-level 'options' property
-            question['options'] = eval(question['fields'].get('options', '[]'))
-            del question['fields']['options']
+            fields = question.pop('fields', {})  # Extract the 'fields' object
+            options = fields.get('options', '')  # Get the options from the 'fields' object
+            fields['options'] = eval(options) if options else []  # Convert options string to list
+            question['fields'] = fields  # Place the modified 'fields' object back into the question
 
         return {"questions": questions}, 200
     
